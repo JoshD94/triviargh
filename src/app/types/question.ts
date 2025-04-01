@@ -1,5 +1,5 @@
 export type Question = {
-    question: String,
-    options: String[],
+    question: string,
+    options: string[],
     answer: number
 }
