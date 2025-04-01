@@ -37,26 +37,34 @@ export default function Home() {
   }, [questions]);
 
   if (loading) {
-    return <div>Loading questions...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading questions...</div>;
   }
 
   if (!questions || questions.length === 0) {
-    return <div>No questions available. Please check your database.</div>;
+    return <div className="flex justify-center items-center h-screen">No questions available. Please check your database.</div>;
   }
 
   return (
-    <>
-      <div>
-        <h2>Triviargh</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="container mx-auto flex-center flex-column min-h-screen p-4">
+      <div className="flex-center flex-column w-full max-w-content">
+        <h2 className="text-2xl font-bold text-center mb-6">Triviargh</h2>
+        <div className="flex-center flex-column gap-4 w-full max-w-2xl">
           {currentQuestionIndex < questions.length ? (
             <>
-              <h3 style={{ marginBottom: '20px' }}>{questions[currentQuestionIndex].question}</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+              <h3 className="text-xl text-center mb-4">{questions[currentQuestionIndex].question}</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', width: '100%' }}>
                 {questions[currentQuestionIndex].options.map((option, index) => (
                   <button
                     key={index}
-                    style={{ padding: '10px', cursor: 'pointer' }}
+                    style={{ 
+                      padding: '12px', 
+                      cursor: 'pointer',
+                      backgroundColor: '#1a1a1a',
+                      borderRadius: '8px',
+                      border: '1px solid transparent',
+                      fontSize: '1em',
+                      fontWeight: '500'
+                    }}
                     onClick={() => {
                       if (index === questions[currentQuestionIndex].answer) {
                         addPoint(score);
@@ -70,22 +78,30 @@ export default function Home() {
               </div>
             </>
           ) : (
-            <div>
-              <p>Quiz finished! Your final score is {score} out of {questions.length}.</p>
+            <div className="text-center">
+              <p className="text-lg mb-4">Quiz finished! Your final score is {score} out of {questions.length}.</p>
               <button
                 onClick={() => {
                   setScore(0);
                   setCurrentQuestionIndex(0);
                 }}
-                style={{ padding: '10px', cursor: 'pointer' }}
+                style={{ 
+                  padding: '10px 20px', 
+                  cursor: 'pointer',
+                  backgroundColor: '#1a1a1a',
+                  borderRadius: '8px',
+                  border: '1px solid transparent',
+                  fontSize: '1em',
+                  fontWeight: '500'
+                }}
               >
                 Restart Quiz
               </button>
             </div>
           )}
+          <p className="text-lg font-semibold text-center mt-4">Score: {score}</p>
         </div>
-        <p>Score: {score}</p>
       </div>
-    </>
+    </div>
   )
 }
