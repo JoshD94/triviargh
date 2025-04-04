@@ -11,6 +11,22 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const router = useRouter();
 
+  function shuffleArray(array: Question[]): Question[] {
+    // Create a copy of the original array to avoid modifying it directly
+    const shuffled = [...array];
+    
+    // Fisher-Yates shuffle algorithm
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      // Generate a random index between 0 and i (inclusive)
+      const j = Math.floor(Math.random() * (i + 1));
+      
+      // Swap elements at indices i and j
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    return shuffled;
+  }
+
   function addPoint(score: number) {
     return setScore(score + 1)
   }
@@ -22,7 +38,7 @@ export default function Home() {
         const response = await fetch('/api/questions');
         const data = await response.json();
         console.log('Fetched data:', data);
-        setQuestions(data);
+        setQuestions(shuffleArray(data));
       } catch (error) {
         console.error(`Failed to fetch questions: ${error instanceof Error ? error.message : String(error)}`);
       } finally {
@@ -101,7 +117,7 @@ export default function Home() {
               </button>
             </div>
           )}
-          <p className="text-lg font-semibold text-center mt-4">Score: {score}</p>
+          <p className="text-lg font-semibold text-center mt-4">Score: {score}/{questions.length}</p>
           <button
             onClick={() => {router.push('/create-question')}}
             style={{
