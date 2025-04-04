@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Question } from './types/question'
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [score, setScore] = useState(0)
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [loading, setLoading] = useState(true)
+  const router = useRouter();
 
   function addPoint(score: number) {
     return setScore(score + 1)
@@ -100,6 +102,20 @@ export default function Home() {
             </div>
           )}
           <p className="text-lg font-semibold text-center mt-4">Score: {score}</p>
+          <button
+            onClick={() => {router.push('/create-question')}}
+            style={{
+              padding: '10px 20px',
+              cursor: 'pointer',
+              backgroundColor: '#1a1a1a',
+              borderRadius: '8px',
+              border: '1px solid transparent',
+              fontSize: '1em',
+              fontWeight: '500'
+            }}
+          >
+            Create a Question
+          </button>
         </div>
       </div>
     </div>
