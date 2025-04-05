@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 export default function Home() {
   const router = useRouter();
@@ -34,7 +35,14 @@ export default function Home() {
   return (
     <div className="container mx-auto flex items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-8">Triviargh</h2>
+        <Image
+          src="/logo-black.png"
+          alt="Triviargh Logo"
+          width={200}
+          height={100}
+          className="mx-auto mb-0"
+        />
+        {/* <h2 className="text-3xl font-bold text-center mb-8">Triviargh</h2> */}
 
         {error && (
           <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded text-red-200 w-full">

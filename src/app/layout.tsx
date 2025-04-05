@@ -15,7 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Triviargh",
   description: "Quiz game for everyone",
-  
+  icons: {
+    icon: "/favicon_io/favicon.ico",
+  },
 };
 
 export default function RootLayout({
