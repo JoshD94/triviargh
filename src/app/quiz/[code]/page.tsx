@@ -2,16 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { Question } from "@/app/types/question";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
-export default function Quiz({ params }: { params: { code: string } }) {
+export default function Quiz() {
   const [score, setScore] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { code } = params;
+  const params = useParams<{ code: string }>();
+  const code = params?.code as string;
 
   function shuffleArray(array: Question[]): Question[] {
     const shuffled = [...array];
