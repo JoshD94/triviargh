@@ -18,5 +18,12 @@ model Question {
   question String
   options  String[]
   answer   Int
+  roomId   Int
+  room     Room     @relation(fields: [roomId], references: [id])
 }
 
+model Room {
+  id       Int      @id @default(autoincrement())
+  code     String   @unique
+  questions Question[]
+}

@@ -1,5 +1,7 @@
 export type Question = {
-    question: string,
-    options: string[],
-    answer: number
-}
+  id?: number;
+  question: string;
+  options: string[];
+  answer: number;
+  roomId?: number;
+};

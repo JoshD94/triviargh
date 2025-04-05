@@ -1,139 +1,86 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Question } from './types/question'
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
-  const [score, setScore] = useState(0)
-  const [questions, setQuestions] = useState<Question[]>([])
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [loading, setLoading] = useState(true)
   const router = useRouter();
+  const [roomCode, setRoomCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function shuffleArray(array: Question[]): Question[] {
-    // Create a copy of the original array to avoid modifying it directly
-    const shuffled = [...array];
-    
-    // Fisher-Yates shuffle algorithm
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      // Generate a random index between 0 and i (inclusive)
-      const j = Math.floor(Math.random() * (i + 1));
-      
-      // Swap elements at indices i and j
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  const handleJoinRoom = async () => {
+    if (!roomCode.trim()) {
+      setError("Please enter a room code");
+      return;
     }
-    
-    return shuffled;
-  }
 
-  function addPoint(score: number) {
-    return setScore(score + 1)
-  }
+    setIsLoading(true);
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/questions');
-        const data = await response.json();
-        console.log('Fetched data:', data);
-        setQuestions(shuffleArray(data));
-      } catch (error) {
-        console.error(`Failed to fetch questions: ${error instanceof Error ? error.message : String(error)}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Navigate to the room - our API will create it if it doesn't exist
+    router.push(`/room/${roomCode}`);
+  };
 
-    fetchQuestions();
-  }, []);
-
-  // Console log outside useEffect to see the updated state
-  useEffect(() => {
-    console.log('Updated questions state:', questions);
-  }, [questions]);
-
-  if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading questions...</div>;
-  }
-
-  if (!questions || questions.length === 0) {
-    return <div className="flex justify-center items-center h-screen">No questions available. Please check your database.</div>;
-  }
+  const handleCreateRoom = () => {
+    // Generate a random room code
+    const newRoomCode = Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+    setRoomCode(newRoomCode);
+  };
 
   return (
-    <div className="container mx-auto flex-center flex-column min-h-screen p-4">
-      <div className="flex-center flex-column w-full max-w-content">
-        <h2 className="text-2xl font-bold text-center mb-6">Triviargh</h2>
-        <div className="flex-center flex-column gap-4 w-full max-w-2xl">
-          {currentQuestionIndex < questions.length ? (
-            <>
-              <h3 className="text-xl text-center mb-4">{questions[currentQuestionIndex].question}</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', width: '100%' }}>
-                {questions[currentQuestionIndex].options.map((option, index) => (
-                  <button
-                    key={index}
-                    style={{ 
-                      padding: '12px', 
-                      cursor: 'pointer',
-                      backgroundColor: '#1a1a1a',
-                      borderRadius: '8px',
-                      border: '1px solid transparent',
-                      fontSize: '1em',
-                      fontWeight: '500'
-                    }}
-                    onClick={() => {
-                      if (index === questions[currentQuestionIndex].answer) {
-                        addPoint(score);
-                      }
-                      setCurrentQuestionIndex(currentQuestionIndex + 1);
-                    }}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="text-center">
-              <p className="text-lg mb-4">Quiz finished! Your final score is {score} out of {questions.length}.</p>
-              <button
-                onClick={() => {
-                  setScore(0);
-                  setCurrentQuestionIndex(0);
-                }}
-                style={{ 
-                  padding: '10px 20px', 
-                  cursor: 'pointer',
-                  backgroundColor: '#1a1a1a',
-                  borderRadius: '8px',
-                  border: '1px solid transparent',
-                  fontSize: '1em',
-                  fontWeight: '500'
-                }}
-              >
-                Restart Quiz
-              </button>
-            </div>
-          )}
-          <p className="text-lg font-semibold text-center mt-4">Score: {score}/{questions.length}</p>
-          <button
-            onClick={() => {router.push('/create-question')}}
-            style={{
-              padding: '10px 20px',
-              cursor: 'pointer',
-              backgroundColor: '#1a1a1a',
-              borderRadius: '8px',
-              border: '1px solid transparent',
-              fontSize: '1em',
-              fontWeight: '500'
-            }}
-          >
-            Create a Question
-          </button>
+    <div className="container mx-auto flex items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center mb-8">Triviargh</h2>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded text-red-200 w-full">
+            {error}
+          </div>
+        )}
+
+        <div className="w-full space-y-6">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">Room Code</label>
+            <Input
+              type="text"
+              value={roomCode}
+              onChange={(e) => {
+                setRoomCode(e.target.value.toUpperCase());
+                setError(null);
+              }}
+              placeholder="Enter room code"
+              className="h-14 text-lg w-full uppercase"
+              maxLength={6}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              onClick={handleCreateRoom}
+              className="py-3 px-4 rounded bg-slate-700 hover:bg-slate-600 transition-colors font-medium"
+              disabled={isLoading}
+            >
+              Generate Code
+            </button>
+
+            <button
+              onClick={handleJoinRoom}
+              className={`py-3 px-4 rounded transition-colors font-medium ${
+                isLoading
+                  ? "bg-slate-600 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+              disabled={isLoading || !roomCode.trim()}
+            >
+              {isLoading ? "Joining..." : "Join Room"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
