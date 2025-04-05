@@ -97,7 +97,7 @@ export default function CreateQuestion() {
   };
 
   return (
-    <div className="container mx-auto p-6 h-screen">
+    <div className="container mx-auto p-6 h-screen flex items-center justify-center">
       <div className="max-w-lg mx-auto bg-slate-800 p-8 rounded-lg shadow-lg">
         <h2 className="text-xl font-bold text-center mb-2">Create Questions</h2>
         <p className="text-center text-slate-400 mb-6">Room: {code}</p>
