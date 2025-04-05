@@ -160,7 +160,7 @@ export default function CreateQuestion() {
         </div>
 
         <p className="text-center text-sm text-slate-400">
-          After adding all your questions, click "Done Adding" to return to the
+          After adding all your questions, click &quot;Done Adding&quot; to return to the
           room.
         </p>
       </div>
