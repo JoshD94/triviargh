@@ -1,16 +1,17 @@
 import { PrismaClient } from "@prisma/client";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
+// Next.js 15 route handler signature for dynamic routes
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { code: string } },
+  request: Request,
+  context: { params: { code: string } }
 ) {
   try {
     // Find the room by code or create it if it doesn't exist
     let room = await prisma.room.findUnique({
-      where: { code: params.code },
+      where: { code: context.params.code },
       include: { questions: true },
     });
 
@@ -18,7 +19,7 @@ export async function GET(
     if (!room) {
       room = await prisma.room.create({
         data: {
-          code: params.code,
+          code: context.params.code,
         },
         include: { questions: true },
       });
@@ -37,7 +38,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { code: string } },
+  context: { params: { code: string } }
 ) {
   try {
     const body = await request.json();
@@ -63,13 +64,13 @@ export async function POST(
 
     // Find the room or create it if it doesn't exist
     let room = await prisma.room.findUnique({
-      where: { code: params.code },
+      where: { code: context.params.code },
     });
 
     if (!room) {
       room = await prisma.room.create({
         data: {
-          code: params.code,
+          code: context.params.code,
         },
       });
     }
