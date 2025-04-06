@@ -26,6 +26,8 @@ async function get_questions(theme?: string) {
             There must only be one correct answer, and only four options in total.
             Omit any code blocks in the response with json ticks.
             Do not include any additional text or explanations outside of the JSON structure.
+            Do not include any bold text or formatting.
+            Try to make the question positive instead of negative, for example "Which of the following is a fruit?" instead of "Which of the following is not a fruit?".
             Make sure the question is not too easy or too difficult, and that the options are plausible.
             ${theme ? `The question should be specifically about "${theme}".` : 'The question should be suitable for a general audience.'}
             `,
@@ -45,8 +47,8 @@ async function get_questions(theme?: string) {
     } catch (error) {
         console.error("Error:", error);
         return {
-            question: theme 
-                ? `What is a famous landmark associated with ${theme}?` 
+            question: theme
+                ? `What is a famous landmark associated with ${theme}?`
                 : "What is the capital of France?",
             options: theme
                 ? ["Eiffel Tower", "Great Wall of China", "Taj Mahal", "Statue of Liberty"]

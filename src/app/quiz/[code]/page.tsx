@@ -10,6 +10,8 @@ export default function Quiz() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const router = useRouter();
   const params = useParams<{ code: string }>();
   const code = params?.code as string;
@@ -28,6 +30,26 @@ export default function Quiz() {
   function addPoint() {
     setScore((prevScore) => prevScore + 1);
   }
+
+  // Handle answer selection with animation
+  const handleAnswerClick = (index: number) => {
+    const correctAnswer = questions[currentQuestionIndex].answer;
+    const correct = index === correctAnswer;
+    
+    setSelectedOptionIndex(index);
+    setIsCorrect(correct);
+    
+    if (correct) {
+      addPoint();
+    }
+    
+    // Delay moving to next question to show animation
+    setTimeout(() => {
+      setSelectedOptionIndex(null);
+      setIsCorrect(null);
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    }, 800);
+  };
 
   useEffect(() => {
     // Only fetch if we have a valid code
@@ -125,13 +147,12 @@ export default function Quiz() {
                   (option, index) => (
                     <button
                       key={index}
-                      className="p-3 bg-slate-700 hover:bg-slate-600 rounded border border-slate-600 font-medium transition-colors"
-                      onClick={() => {
-                        if (index === questions[currentQuestionIndex].answer) {
-                          addPoint();
-                        }
-                        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-                      }}
+                      className={`p-3 bg-slate-700 hover:bg-slate-600 rounded border border-slate-600 font-medium transition-colors
+                        ${selectedOptionIndex === index && isCorrect ? 'pulse-animation' : ''}
+                        ${selectedOptionIndex === index && !isCorrect ? 'shake-animation' : ''}
+                      `}
+                      disabled={selectedOptionIndex !== null}
+                      onClick={() => handleAnswerClick(index)}
                     >
                       {option}
                     </button>
