@@ -112,6 +112,39 @@ export default function Room() {
     }
   }
 
+  const handleAiQuestion = async () => {
+    try {
+      const response = await fetch(`/api/gemini`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roomCode: code }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to generate AI question",
+        );
+      }
+
+      const data = await response.json();
+      setQuestions((prevQuestions) => [...prevQuestions, data]);
+    } catch (error) {
+      console.error(
+        `Failed to generate AI question: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to generate AI question",
+      );
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -150,6 +183,12 @@ export default function Room() {
               Questions ({questions.length})
             </h2>
             <button
+              onClick={handleAiQuestion}
+              className="py-2 px-3 rounded bg-slate-700 hover:bg-slate-600 transition-colors text-sm font-medium"
+            >
+              AI-generate Question
+            </button>
+            <button
               onClick={handleAddQuestion}
               className="py-2 px-3 rounded bg-slate-700 hover:bg-slate-600 transition-colors text-sm font-medium"
             >
@@ -170,7 +209,7 @@ export default function Room() {
                 >
                   <p className="font-medium">{q.question}</p>
                   <Trash 
-                    className="w-4 h-4 text-red-500 cursor-pointer ml-auto"
+                    className="w-4 h-4 text-red-500 cursor-pointer ml-auto min-w-4 min-h-4 m-2"
                     onClick={() => {
                       deleteQuestion(q.id);
                     }}
