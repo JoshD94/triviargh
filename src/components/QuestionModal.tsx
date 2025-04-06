@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { Question } from '@/app/types/question';
 
 interface QuestionModalProps {
   isOpen: boolean;
   onClose: () => void;
   roomCode: string;
-  onQuestionGenerated: (question: any) => void;
+  onQuestionGenerated: (question: Question) => void;
 }
 
 export default function QuestionModal({ 
