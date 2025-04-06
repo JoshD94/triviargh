@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-async function get_questions() {
+async function get_questions(theme?: string) {
     try {
-        console.log("Starting question generation...");
+        console.log(`Starting question generation${theme ? ` for theme: ${theme}` : ''}...`);
 
         const result = await ai.models.generateContent({
             model: "gemini-2.0-flash-001",
             contents: `
-            Generate a fun, challenging trivia question on a random topic. 
+            Generate a fun, challenging trivia question ${theme ? `about "${theme}"` : 'on a random topic'}. 
             Return the response in the following JSON structure:
 
             {
@@ -27,7 +27,7 @@ async function get_questions() {
             Omit any code blocks in the response with json ticks.
             Do not include any additional text or explanations outside of the JSON structure.
             Make sure the question is not too easy or too difficult, and that the options are plausible.
-            The question should be suitable for a general audience and should not be too obscure or niche.
+            ${theme ? `The question should be specifically about "${theme}".` : 'The question should be suitable for a general audience.'}
             `,
         });
 
@@ -45,9 +45,13 @@ async function get_questions() {
     } catch (error) {
         console.error("Error:", error);
         return {
-            question: "What is the capital of France?",
-            options: ["London", "Berlin", "Paris", "Madrid"],
-            answer: 2
+            question: theme 
+                ? `What is a famous landmark associated with ${theme}?` 
+                : "What is the capital of France?",
+            options: theme
+                ? ["Eiffel Tower", "Great Wall of China", "Taj Mahal", "Statue of Liberty"]
+                : ["London", "Berlin", "Paris", "Madrid"],
+            answer: theme ? 0 : 2
         };
     }
 }
@@ -63,7 +67,7 @@ export async function POST(request: Request) {
         }
 
         // Call the AI to generate a question
-        const ai_question = await get_questions();
+        const ai_question = await get_questions(body.theme);
         if (!ai_question) {
             return NextResponse.json(
                 { error: "Failed to generate question" },

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Question } from "@/app/types/question";
 import { Trash } from "lucide-react";
+import QuestionModal from "@/components/QuestionModal"; // Import the new modal component
 
 export default function Room() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function Room() {
   const [error, setError] = useState<string | null>(null);
   const params = useParams();
   const code = params.code as string;
+  const [isModalOpen, setIsModalOpen] = useState(false); // Add state for modal
 
   useEffect(() => {
     // Only fetch if we have a valid code
@@ -112,37 +114,14 @@ export default function Room() {
     }
   }
 
-  const handleAiQuestion = async () => {
-    try {
-      const response = await fetch(`/api/gemini`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ roomCode: code }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error || "Failed to generate AI question",
-        );
-      }
+  // Replace the old handleAiQuestion with opening the modal
+  const openAiQuestionModal = () => {
+    setIsModalOpen(true);
+  };
 
-      const data = await response.json();
-      setQuestions((prevQuestions) => [...prevQuestions, data]);
-    } catch (error) {
-      console.error(
-        `Failed to generate AI question: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Failed to generate AI question",
-      );
-    }
+  // Handle the generated question from the modal
+  const handleQuestionGenerated = (question: Question) => {
+    setQuestions((prevQuestions) => [...prevQuestions, question]);
   };
 
   if (loading) {
@@ -183,8 +162,8 @@ export default function Room() {
               Questions ({questions.length})
             </h2>
             <button
-              onClick={handleAiQuestion}
-              className="py-2 px-3 rounded bg-slate-700 hover:bg-slate-600 transition-colors text-sm font-medium"
+              onClick={openAiQuestionModal}
+              className="py-2 px-3 rounded bg-slate-700 hover:bg-slate-600 transition-colors text-sm font-medium ai-button-highlight"
             >
               AI-generate Question
             </button>
@@ -207,15 +186,16 @@ export default function Room() {
                   key={index}
                   className="p-3 flex flex-row items-center border border-slate-700 rounded-md mb-2"
                 >
-                  <p className="font-medium">{q.question}</p>
+                  <div className="flex-1">
+                    <p className="font-medium">{q.question}</p>                
+                  </div>
                   <Trash 
-                    className="w-4 h-4 text-red-500 cursor-pointer ml-auto min-w-4 min-h-4 m-2"
+                    className="w-4 h-4 text-red-500 cursor-pointer min-w-4 min-h-4 m-2"
                     onClick={() => {
                       deleteQuestion(q.id);
                     }}
                   />
                 </div>
-                
               ))}
             </div>
           )}
@@ -241,6 +221,14 @@ export default function Room() {
             Back to Home
           </button>
         </div>
+
+        {/* Add the Question Modal */}
+        <QuestionModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          roomCode={code}
+          onQuestionGenerated={handleQuestionGenerated}
+        />
       </div>
     </div>
   );
