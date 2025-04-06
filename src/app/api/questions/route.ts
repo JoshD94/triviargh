@@ -54,3 +54,26 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json(
+        { error: "Missing question ID" },
+        { status: 400 },
+      );
+    }
+    const deleted_question = await prisma.question.delete({
+      where: { id: Number(id) },
+    });
+    return NextResponse.json(deleted_question, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: `Failed to delete question: ${error instanceof Error ? error.message : String(error)}`,
+      },
+      { status: 500 },
+    );
+  }
+}

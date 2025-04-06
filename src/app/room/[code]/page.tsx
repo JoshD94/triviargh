@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Question } from "@/app/types/question";
+import { Trash } from "lucide-react";
 
 export default function Room() {
   const router = useRouter();
@@ -54,6 +55,63 @@ export default function Room() {
     router.push(`/create-question/${code}`);
   };
 
+  const deleteQuestion = async (id: number) => {
+    try {
+      const response = await fetch(`/api/questions/`, {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to delete question",
+        );
+      }
+      setQuestions((prevQuestions) =>
+        prevQuestions.filter((question) => question.id !== id),
+      );
+    } catch (error) {
+      console.error(
+        `Failed to delete question: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete question",
+      );
+    }
+  };
+
+  const handleDeleteRoom = async () => {
+    if (confirm("Are you sure you want to delete this room?")) {
+      try {
+        const response = await fetch(`/api/rooms/${code}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.error || "Failed to delete room",
+          );
+        }
+        router.push("/");
+      } catch (error) {
+        console.error(
+          `Failed to delete room: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to delete room",
+        );
+      }
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -65,11 +123,21 @@ export default function Room() {
   return (
     <div className="container mx-auto flex items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-lg">
-        <h2 className="text-3xl font-bold text-center mb-2">Room: {code}</h2>
-        <p className="text-center mb-8 text-slate-400">
-          Share this code with others to join
-        </p>
-
+        <div className="flex flex-row justify-between items-center mb-4">
+          <div>
+            <h2 className="text-3xl font-bold mb-2">Room: {code}</h2>
+            <p className="text-slate-400">
+              Share this code with others to join
+            </p>
+          </div>
+          <div title="Delete room">
+            <Trash
+              className="w-6 h-6 text-red-500 cursor-pointer mr-4"
+              onClick={handleDeleteRoom}
+            />
+          </div>
+        </div>
+        
         {error && (
           <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded text-red-200">
             {error}
@@ -98,10 +166,17 @@ export default function Room() {
               {questions.map((q, index) => (
                 <div
                   key={index}
-                  className="p-3 border border-slate-700 rounded-md mb-2"
+                  className="p-3 flex flex-row items-center border border-slate-700 rounded-md mb-2"
                 >
                   <p className="font-medium">{q.question}</p>
+                  <Trash 
+                    className="w-4 h-4 text-red-500 cursor-pointer ml-auto"
+                    onClick={() => {
+                      deleteQuestion(q.id);
+                    }}
+                  />
                 </div>
+                
               ))}
             </div>
           )}

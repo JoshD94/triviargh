@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { Room } from "@/app/types/question";
 
 const prisma = new PrismaClient();
 
@@ -99,6 +100,39 @@ export async function POST(
     return NextResponse.json(
       {
         error: `Failed to create question: ${error instanceof Error ? error.message : String(error)}`,
+      },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ code: string }> }
+) {
+  try {
+    const { code } = await context.params;
+    let room = await prisma.room.findUnique({
+      where: { code },
+    });
+    if (!room) {
+      return NextResponse.json(
+        { error: "Room not found" },
+        { status: 404 },
+      );
+    }
+    // Delete the room and all its questions
+    await prisma.question.deleteMany({
+      where: { roomId: room.id },
+    });
+    await prisma.room.delete({
+      where: { id: room.id },
+    });
+    return NextResponse.json({ message: "Room and questions deleted" });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: `Failed to delete question: ${error instanceof Error ? error.message : String(error)}`,
       },
       { status: 500 },
     );

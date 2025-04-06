@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 
 interface OptionSelectorProps {
@@ -15,11 +15,14 @@ export default function OptionSelector({
   const [options, setOptions] = useState<string[]>(defaultOptions);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
+  useEffect(() => {
+    setOptions(defaultOptions);
+  }, [defaultOptions]);
+
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
-    // Only trigger onChange when options actually change
     onChange(newOptions, selectedIndex);
   };
 
@@ -32,7 +35,6 @@ export default function OptionSelector({
     <div className="space-y-3">
       {options.map((option, index) => (
         <div key={index} className="flex flex-row items-center justify-between w-full p-2 mb-2">
-          
           <Input
             value={option}
             onChange={(e) => handleOptionChange(index, e.target.value)}
