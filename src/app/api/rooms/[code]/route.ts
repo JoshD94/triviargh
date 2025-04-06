@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { Room } from "@/app/types/question";
 
 const prisma = new PrismaClient();
 
@@ -112,7 +111,7 @@ export async function DELETE(
 ) {
   try {
     const { code } = await context.params;
-    let room = await prisma.room.findUnique({
+    const room = await prisma.room.findUnique({
       where: { code },
     });
     if (!room) {
