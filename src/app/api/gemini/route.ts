@@ -11,7 +11,7 @@ async function get_questions(theme?: string) {
         console.log(`Starting question generation${theme ? ` for theme: ${theme}` : ''}...`);
 
         const result = await ai.models.generateContent({
-            model: "gemini-2.0-flash-001",
+            model: "gemini-2.0-flash-lite-001",
             contents: `
             Generate a fun, challenging trivia question ${theme ? `about "${theme}"` : 'on a random topic'}. 
             Return the response in the following JSON structure:
