@@ -27,3 +27,23 @@ model Room {
   code     String   @unique
   questions Question[]
 }
+
+model Question2 {
+  id          Int      @id @default(autoincrement())
+  question    String
+  username    String
+  votes       String[]    // Store the usernames of users who voted for this question
+}
+
+model Game {
+  id           Int      @id @default(autoincrement())
+  answer       String
+  questions2   Question2[]
+}
+
+model Room2 {
+  id        Int     @id @default(autoincrement())
+  code      String   @unique
+  games     Game[]
+  users     String[]    // List of user's usernames
+}

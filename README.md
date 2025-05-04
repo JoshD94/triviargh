@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Triviargh 🎮
+
+A modern quiz application that lets users create custom trivia rooms, generate questions with AI, and play with friends.
+
+![Triviargh Home Page Screenshot](public/triviargh-page-1.png)
+![Triviargh Quiz Page Screenshot](public/triviargh-page-2.png)
+![Triviargh Game Screenshot](public/triviargh-page-3.png)
+
+## Features
+
+- **Room Management**: Create private quiz rooms with unique 6-character codes
+- **AI Question Generation**: Leverage Google's Gemini AI to automatically generate quiz questions
+- **Custom Questions**: Manually create your own custom questions with multiple-choice answers
+- **Real-time Feedback**: Animated feedback on correct and incorrect answers
+- **Responsive Design**: Works on desktop and mobile devices
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TailwindCSS
+- **Backend**: Next.js API routes
+- **Database**: PostgreSQL with Prisma ORM
+- **AI**: Google Gemini AI for question generation
+- **Analytics**: Vercel Analytics
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18.x or later
+- PostgreSQL database
+- Google Gemini API key
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/triviargh.git
+   cd triviargh
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Set up environment variables
+   Create a `.env` file in the root directory with the following:
+   ```
+   DATABASE_URL="postgresql://username:password@localhost:5432/triviargh"
+   GEMINI_API_KEY="your-gemini-api-key"
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Set up the database
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Run the development server
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project can be easily deployed on Vercel:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push your code to GitHub
+2. Import your repository on Vercel
+3. Configure the environment variables
+4. Deploy!
+
+## Usage
+
+1. Create a new quiz room or join an existing one with a 6-character code
+2. Add questions manually or generate them with AI
+3. Start the quiz and answer the questions
+4. See your final score and play again!
+
+## License
+
+MIT
+
+## Acknowledgments
+
+- Google Gemini AI for powering the question generation
+- Next.js team for the amazing framework
+- Vercel for hosting
